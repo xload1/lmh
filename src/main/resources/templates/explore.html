@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore Movies | Local Movie Hub</title>
+  <style>
+    /* --------- GLOBAL STYLES --------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* --------- NAVBAR --------- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #1a1a1a;
+      padding: 0.8rem 2rem;
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    nav ul {
+      list-style-type: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav ul li {
+      color: #ffffff;
+      transition: color 0.3s;
+    }
+
+    nav ul li:hover {
+      cursor: pointer;
+      color: #cccccc;
+    }
+
+    /* --------- HERO SECTION --------- */
+    .hero {
+      position: relative;
+      background: url('/banner2.jpg') center/cover no-repeat;
+      min-height: 50vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-content {
+      position: relative;
+      color: #ffffff;
+      max-width: 700px;
+      z-index: 1;
+    }
+
+    .hero-content h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-content p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-content button {
+      background: #f44336;
+      color: #ffffff;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .hero-content button:hover {
+      background: #d32f2f;
+    }
+
+    /* --------- FILTER SECTION --------- */
+    .filter-section {
+      background-color: #ffffff;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+    }
+
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .filter-form select,
+    .filter-form input[type="number"],
+    .filter-form input[type="text"] {
+      flex: 1;
+      min-width: 150px;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .filter-form button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    .filter-form button:hover {
+      background-color: #333333;
+    }
+
+    /* --------- MAIN CONTENT --------- */
+    main {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #f44336;
+      padding-left: 0.5rem;
+    }
+
+    .info-text {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    /* --------- MOVIE LISTS --------- */
+    .movie-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .movie-card {
+      background-color: #ffffff;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .movie-card-content {
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .movie-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .movie-card p {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+
+    .movie-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .movie-rating {
+      background-color: #f44336;
+      color: #ffffff;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    /* --------- NEARBY THEATERS SECTION (OPTIONAL) --------- */
+    .theaters-section {
+      margin-top: 3rem;
+    }
+
+    .theater-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .theater-card {
+      flex: 1 1 300px;
+      background-color: #ffffff;
+      border-radius: 6px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .theater-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .theater-card h4 {
+      margin-bottom: 0.5rem;
+    }
+
+    .theater-card p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    /* --------- FOOTER --------- */
+    footer {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: 3rem;
+    }
+
+    footer p {
+      margin: 0.5rem 0;
+    }
+
+    /* --------- RESPONSIVE DESIGN --------- */
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 1.8rem;
+      }
+      .filter-form {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo" th:href="@{/}">Local Movie Hub</div>
+  <ul>
+    <li th:text="'Current city: '+${userCity}"></li>
+    <li><a href="/home">Home</a></li>
+    <li><a href="/upcoming">Upcoming</a></li>
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="/about">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Explore Movies In Your Area</h1>
+    <p>Browse an extensive collection of movies, filter by genre, rating, or find what’s popular near you.</p>
+    <button id="startBrowsing">Start Browsing</button>
+  </div>
+</section>
+
+<!-- FILTER SECTION -->
+<div class="filter-section">
+  <form class="filter-form" th:action="@{/explore}" method="get">
+    <!-- Example filter inputs -->
+    <select name="genre" id="genre">
+      <option value="">All Genres</option>
+      <option value="action">Action</option>
+      <option value="comedy">Comedy</option>
+      <option value="thriller">Thriller</option>
+      <option value="drama">Drama</option>
+    </select>
+
+    <input type="number" name="minRating" placeholder="Min Rating (0-10)" min="0" max="10">
+    <input type="number" name="maxRating" placeholder="Max Rating (0-10)" min="0" max="10">
+
+    <input type="text" name="keyword" placeholder="Keyword (e.g. movie title)" />
+
+    <button type="submit">Filter</button>
+  </form>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+  <section>
+    <h2 class="section-title">All Movies</h2>
+    <p class="info-text">
+      Browse through our entire catalog. Use the filters above to narrow down your search, or scroll to see all available options.
+    </p>
+    <div class="movie-list" th:if="${allMovies != null}">
+      <!-- Repeat for each movie in the list -->
+      <div class="movie-card" th:each="movie : ${allMovies}">
+        <img th:src="${movie.posterUrl}" alt="Movie Poster" />
+        <div class="movie-card-content">
+          <h3 th:text="${movie.title}">Movie Title</h3>
+          <p th:text="${movie.shortDescription}">Short description...</p>
+          <div class="movie-details">
+            <span class="movie-rating" th:text="${movie.rating}">8.5</span>
+            <a th:href="@{/movie/{id}(id=${movie.id})}">More Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPTIONAL NEARBY THEATERS SECTION -->
+  <section class="theaters-section">
+    <h2 class="section-title">Nearby Theaters</h2>
+    <p class="info-text">
+      Check out theaters in your area, see what's playing soon, and plan your next movie night.
+    </p>
+    <div class="theater-list" th:if="${nearbyTheaters != null}">
+      <div class="theater-card" th:each="theater : ${nearbyTheaters}">
+        <h4 th:text="${theater.name}">Theater Name</h4>
+        <p th:text="${theater.address}">1234 Movie St, Cinema City</p>
+        <p>
+          <strong>Distance:</strong>
+          <span th:text="${theater.distance}">2 km</span>
+        </p>
+        <!-- Add more details, show times, or a link to the theater page if desired -->
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2025 Local Movie Hub</p>
+  <p>Explore and discover movies near you.</p>
+</footer>
+
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const browseBtn = document.getElementById("startBrowsing");
+    const searchBar = document.querySelector(".filter-section");
+
+    if (browseBtn && searchBar) {
+      browseBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        searchBar.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  });
+
+</script>
+</html>

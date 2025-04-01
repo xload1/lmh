@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>About | Local Movie Hub</title>
+    <style>
+        /* --------- GLOBAL STYLES --------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --------- NAVBAR --------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1a1a1a;
+            padding: 0.8rem 2rem;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav ul li {
+            color: #ffffff;
+            transition: color 0.3s;
+        }
+
+        nav ul li:hover {
+            cursor: pointer;
+            color: #cccccc;
+        }
+
+        /* --------- HERO SECTION --------- */
+        .hero {
+            position: relative;
+            background: url('/banner2.jpg') center/cover no-repeat;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            color: #ffffff;
+            max-width: 700px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --------- MAIN CONTENT --------- */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f44336;
+            padding-left: 0.5rem;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .about-grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .about-content h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-content p {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .toggle-faq {
+            margin-top: 1rem;
+            padding: 0.6rem 1rem;
+            background-color: #1a1a1a;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .toggle-faq:hover {
+            background-color: #333333;
+        }
+
+        .faq-section {
+            display: none;
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+
+        /* --------- FOOTER --------- */
+        footer {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        /* --------- RESPONSIVE DESIGN --------- */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+            .hero-content p {
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">Local Movie Hub</div>
+    <ul>
+        <li th:text="'Current city: '+${userCity}"></li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/upcoming">Upcoming</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>About Local Movie Hub</h1>
+        <p>Your trusted guide to the best movies playing near you. Learn about our story and mission below.</p>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main>
+    <h2 class="section-title">Our Story</h2>
+    <div class="about-grid">
+        <img src="team.jpg" alt="Team Photo" />
+        <div class="about-content">
+            <h2>We Live and Breathe Movies</h2>
+            <p>
+                Local Movie Hub was founded by movie enthusiasts who noticed a gap in
+                discovering the latest blockbusters, hidden gems, and local indie showings
+                based on location. We believe that great films deserve great audiences,
+                and our platform helps bridge the gap.
+            </p>
+            <p>
+                From day one, our mission has been to bring personalized recommendations
+                and theater listings to your fingertips, making your movie-going experience
+                smooth and enjoyable.
+            </p>
+        </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 3rem;">Our Mission</h2>
+    <p style="line-height: 1.6;">
+        Our goal is simple: we want to connect people with the movies they love.
+        Whether you’re looking for the nearest cinema showing the latest blockbuster or
+        searching for an obscure indie film, we strive to ensure you always know
+        what’s playing in your area and beyond.
+    </p>
+
+    <button class="toggle-faq">Read Our FAQ</button>
+    <div class="faq-section" id="faq">
+        <h3>Frequently Asked Questions</h3>
+        <p><strong>Q:</strong> How do you determine which movies are trending?</p>
+        <p><strong>A:</strong> Our platform aggregates public rating data, user preferences,
+            and social media buzz to figure out which movies are resonating with audiences
+            in specific regions.</p>
+        <p><strong>Q:</strong> Can I buy tickets directly from Local Movie Hub?</p>
+        <p><strong>A:</strong> We currently partner with select theaters. For others, we
+            provide a link to their official sites so you can purchase tickets directly.</p>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2025 Local Movie Hub</p>
+    <p>Your one-stop destination for movie recommendations near you.</p>
+</footer>
+
+<script>
+    // Toggle FAQ section for better UX
+    const toggleBtn = document.querySelector('.toggle-faq');
+    const faqSection = document.getElementById('faq');
+
+    toggleBtn.addEventListener('click', () => {
+        if (faqSection.style.display === 'none' || faqSection.style.display === '') {
+            faqSection.style.display = 'block';
+            toggleBtn.textContent = 'Hide Our FAQ';
+        } else {
+            faqSection.style.display = 'none';
+            toggleBtn.textContent = 'Read Our FAQ';
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contact | Local Movie Hub</title>
+    <style>
+        /* --------- GLOBAL STYLES --------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --------- NAVBAR --------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1a1a1a;
+            padding: 0.8rem 2rem;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav ul li {
+            color: #ffffff;
+            transition: color 0.3s;
+        }
+
+        nav ul li:hover {
+            cursor: pointer;
+            color: #cccccc;
+        }
+
+        /* --------- HERO SECTION --------- */
+        .hero {
+            position: relative;
+            background: url('/banner2.jpg') center/cover no-repeat;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            color: #ffffff;
+            max-width: 600px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --------- MAIN CONTENT --------- */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f44336;
+            padding-left: 0.5rem;
+        }
+
+        .contact-form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            flex: 1 1 300px;
+        }
+
+        .contact-info h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .contact-form {
+            flex: 1 1 400px;
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .contact-form h2 {
+            margin-bottom: 1rem;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .contact-form button {
+            margin-top: 1rem;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .contact-form button:hover {
+            background-color: #333333;
+        }
+
+        /* --------- FOOTER --------- */
+        footer {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        /* --------- RESPONSIVE DESIGN --------- */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+            .hero-content p {
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .contact-form-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">Local Movie Hub</div>
+    <ul>
+        <li th:text="'Current city: '+${userCity}"></li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/upcoming">Upcoming</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Get in Touch</h1>
+        <p>Questions, feedback, or partnership opportunities? We’re here to help.</p>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main>
+    <h2 class="section-title">Contact Us</h2>
+    <div class="contact-form-container">
+        <div class="contact-info">
+            <h2>Our Office</h2>
+            <p>
+                <strong>Location:</strong><br>
+                1234 Cinema Avenue<br>
+                Movietown, FL 12345
+            </p>
+            <p>
+                <strong>Phone:</strong><br>
+                (123) 456-7890
+            </p>
+            <p>
+                <strong>Email:</strong><br>
+                support@localmoviehub.com
+            </p>
+            <p>
+                <strong>Business Hours:</strong><br>
+                Monday - Wednesday: 9am - 6pm<br>
+                Thursday - Friday: 9am - 8pm<br>
+                Saturday: 10am - 4pm<br>
+                Sunday: Closed <br>
+                Holidays: Closed
+            </p>
+        </div>
+
+        <form class="contact-form" th:action="@{/contact/submit}" method="post">
+            <h2>Send a Message</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" required/>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" required/>
+
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="5" placeholder="Your Message..." required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2025 Local Movie Hub</p>
+    <p>Your one-stop destination for movie recommendations near you.</p>
+</footer>
+
+<!-- Optional: Simple Client-Side Form Validation (Example) -->
+<script>
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (event) => {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                alert("Please fill in all fields before submitting.");
+                event.preventDefault();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

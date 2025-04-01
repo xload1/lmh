@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Local Movie Hub</title>
+    <style>
+        /* --------- GLOBAL STYLES --------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --------- NAVBAR --------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1a1a1a;
+            padding: 0.8rem 2rem;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav ul li {
+            color: #ffffff;
+            transition: color 0.3s;
+        }
+
+        nav ul li:hover {
+            cursor: pointer;
+            color: #cccccc;
+        }
+
+        /* --------- HERO SECTION --------- */
+        .hero {
+            position: relative;
+            background: url('/banner2.jpg') center/cover no-repeat;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            color: #ffffff;
+            max-width: 600px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content button {
+            background: #f44336;
+            color: #ffffff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .hero-content button:hover {
+            background: #d32f2f;
+        }
+
+        /* --------- SEARCH BAR --------- */
+        .search-bar {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: -2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-bar form {
+            display: flex;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+        }
+
+        .search-bar input[type="text"] {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-right: none;
+            outline: none;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-bar button {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #333333;
+        }
+
+        /* --------- MAIN CONTENT --------- */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f44336;
+            padding-left: 0.5rem;
+        }
+
+        /* --------- MOVIE LISTS --------- */
+        .movie-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .movie-card {
+            background-color: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .movie-card-content {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .movie-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .movie-card p {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .movie-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .movie-rating {
+            background-color: #f44336;
+            color: #ffffff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        /* --------- FOOTER --------- */
+        footer {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        /* --------- RESPONSIVE DESIGN --------- */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            .hero-content p {
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hidden Form for Sending the City -->
+<form id="cityForm" th:action="@{'/setCity'}" method="post">
+    <input type="hidden" name="city" id="cityInput" value="" />
+</form>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">Local Movie Hub</div>
+    <ul>
+        <li th:text="'Current city: '+${userCity}"></li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/upcoming">Upcoming</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Discover Movies Near You</h1>
+        <p>Find out which movies are trending in your area, watch trailers, and read reviews.</p>
+        <button onclick="location.href='/explore'">Explore Now</button>
+    </div>
+</section>
+
+<!-- SEARCH BAR -->
+<div class="search-bar">
+    <form th:action="@{/search}" method="get">
+        <input type="text" name="q" placeholder="Search for movies, genres, or actors..." />
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+    <!-- RECOMMENDED MOVIES SECTION -->
+    <h2 class="section-title">Recommended For You</h2>
+    <div class="movie-list" th:if="${recommendedMovies != null}">
+        <div class="movie-card" th:each="movie : ${recommendedMovies}">
+            <img th:src="${movie.posterUrl}" alt="Movie Poster" />
+            <div class="movie-card-content">
+                <h3 th:text="${movie.title}">Movie Title</h3>
+                <p th:text="${movie.shortDescription}">Short description of the movie...</p>
+                <div class="movie-details">
+                    <span class="movie-rating" th:text="${movie.rating}">8.5</span>
+                    <a th:href="@{/movie/{id}(id=${movie.id})}">More Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRENDING MOVIES SECTION -->
+    <h2 class="section-title" style="margin-top: 2rem;">Trending in Your Area</h2>
+    <div class="movie-list" th:if="${trendingMovies != null}">
+        <div class="movie-card" th:each="trend : ${trendingMovies}">
+            <img th:src="${trend.posterUrl}" alt="Movie Poster" />
+            <div class="movie-card-content">
+                <h3 th:text="${trend.title}">Trending Movie Title</h3>
+                <p th:text="${trend.shortDescription}">Short description of the trending movie...</p>
+                <div class="movie-details">
+                    <span class="movie-rating" th:text="${trend.rating}">9.0</span>
+                    <a th:href="@{/movie/{id}(id=${trend.id})}">More Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2025 Local Movie Hub</p>
+    <p>Your one-stop destination for movie recommendations near you.</p>
+</footer>
+
+</body>
+<script>
+    // Utility function to get a cookie by name
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function getUserCity() {
+        // Check if the "userCity" cookie exists
+        if (getCookie("userCity")) {
+            console.log("userCity cookie exists:", getCookie("userCity"));
+            return; // Skip geolocation if cookie is already set
+        }
+
+        console.log("TEST");
+        if (navigator.geolocation) {
+            console.log("1");
+            navigator.geolocation.getCurrentPosition(success, error, {
+                enableHighAccuracy: false // lower accuracy is often faster
+            });
+        } else {
+            console.log("2");
+            console.error("Geolocation is not supported by this browser.");
+            sendCityToBackend("Unknown");
+        }
+
+        function success(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            console.log("working..");
+            // Use reverse geocoding via Nominatim to get the city name
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Reverse Geocoding Response:", data);
+                    const city = data.address.city || data.address.town || data.address.village || "Unknown";
+                    console.log("Determined city:", city);
+                    sendCityToBackend(city);
+                })
+                .catch(err => {
+                    console.error("Error fetching location details:", err);
+                    sendCityToBackend("Unknown");
+                });
+        }
+
+        function error(err) {
+            console.error(`ERROR(${err.code}): ${err.message}`);
+            sendCityToBackend("Unknown");
+        }
+    }
+
+    function sendCityToBackend(city) {
+        // Set the city value in the hidden form field
+        document.getElementById("cityInput").value = city;
+        // Submit the form to send the city to the backend
+        document.getElementById("cityForm").submit();
+    }
+
+    // Call the function when the page loads
+    document.addEventListener("DOMContentLoaded", getUserCity);
+
+</script>
+</html>
