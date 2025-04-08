@@ -325,6 +325,7 @@
   <form class="filter-form" th:action="@{/explore}" method="get">
     <!-- Example filter inputs -->
     <select name="genre" id="genre">
+      <option th:text="${chosenGenre}" th:if="${!chosenGenre.equals('')}" value="">All Genres</option>
       <option value="">All Genres</option>
       <option value="action">Action</option>
       <option value="comedy">Comedy</option>
@@ -351,15 +352,15 @@
     <div class="movie-list" th:if="${allMovies != null}">
       <!-- Repeat for each movie in the list -->
       <div class="movie-card" th:each="movie : ${allMovies}">
-        <img th:src="${movie.posterUrl}" th:alt="${movie.posterUrl}" />
+        <img th:src="${movie.getPosterUrl()}" th:alt="${movie.getPosterUrl()}" />
         <div class="movie-card-content">
-          <h3 th:text="${movie.title}">Movie Title</h3>
-          <p th:text="${movie.shortDescription}">Short description...</p>
+          <h3 th:text="${movie.getTitle()}">Movie Title</h3>
+          <p th:text="${movie.getShortDescription()}">Short description...</p>
           <div class="movie-details">
-            <span class="movie-rating-r" th:text="${movie.formatRating()}" th:if="${movie.rating <= 30}"></span>
-            <span class="movie-rating-o" th:text="${movie.formatRating()}" th:if="${movie.rating > 30 && movie.rating <= 70}"></span>
-            <span class="movie-rating-g" th:text="${movie.formatRating()}" th:if="${movie.rating > 70}"></span>
-            <a th:href="@{/movie/{id}(id=${movie.id})}">More Details</a>
+            <span class="movie-rating-r" th:text="${movie.formatRating()}" th:if="${movie.getRating() <= 30}"></span>
+            <span class="movie-rating-o" th:text="${movie.formatRating()}" th:if="${movie.getRating() > 30 && movie.getRating() <= 70}"></span>
+            <span class="movie-rating-g" th:text="${movie.formatRating()}" th:if="${movie.getRating() > 70}"></span>
+            <a th:href="@{/movie/{id}(id=${movie.getId()})}">More Details</a>
           </div>
         </div>
       </div>

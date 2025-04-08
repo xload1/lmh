@@ -1,5 +1,6 @@
 package com.wspa.localmoviehub.controllers;
 
+import com.wspa.localmoviehub.entities.Movies;
 import com.wspa.localmoviehub.functional.MovieService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -28,11 +31,17 @@ public class MainController {
     }
 
     @GetMapping("/explore")
-    public String explore(Model model, HttpServletRequest request) {
+    public String explore(Model model, HttpServletRequest request,
+                          @RequestParam(value = "genre", required = false) String genre,
+                          @RequestParam(value = "minRating", required = false) Integer minRating,
+                          @RequestParam(value = "maxRating", required = false) Integer maxRating,
+                          @RequestParam(value = "keyword", required = false) String keyword) {
+
+
         model.addAttribute("userCity", getCity(request));
-        model.addAttribute("allMovies", movieService.getAllReleasedMovies());
-        System.out.println(movieService.getAllReleasedMovies().get(0).getPosterUrl());
-        System.out.println(movieService.getAllReleasedMovies().get(0).getTitle());
+        List<Movies> movies = movieService.getFilteredMovies(genre, minRating, maxRating, keyword);
+        model.addAttribute("allMovies", movies);
+        model.addAttribute("chosenGenre", genre);
 
         return "explore";
     }

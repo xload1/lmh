@@ -1,13 +1,13 @@
 package com.wspa.localmoviehub.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,15 +17,22 @@ import lombok.Setter;
 public class Movies {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    int id;
-    String title;
-    String shortDescription;
-    String posterUrl;
-    String trailerUrl;
-    int rating;
-    boolean released;
+    private int id;
+    private String title;
+    private String shortDescription;
+    private String posterUrl;
+    private String trailerUrl;
+    private int rating;
+    private boolean released;
     //вид 9.0 (с точкой)
     public String formatRating() {
         return "" + rating/10 + "." + rating % 10;
     }
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres = new HashSet<>();
 }
