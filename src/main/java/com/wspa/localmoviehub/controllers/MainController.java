@@ -1,8 +1,10 @@
 package com.wspa.localmoviehub.controllers;
 
+import com.wspa.localmoviehub.functional.MovieService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class MainController {
     String cur_city = "Unknown";
+    @Autowired
+    private MovieService movieService;
 
     @GetMapping("/")
     public String redirectHome() {
@@ -26,6 +30,10 @@ public class MainController {
     @GetMapping("/explore")
     public String explore(Model model, HttpServletRequest request) {
         model.addAttribute("userCity", getCity(request));
+        model.addAttribute("allMovies", movieService.getAllReleasedMovies());
+        System.out.println(movieService.getAllReleasedMovies().get(0).getPosterUrl());
+        System.out.println(movieService.getAllReleasedMovies().get(0).getTitle());
+
         return "explore";
     }
 

@@ -220,8 +220,20 @@
       font-size: 0.9rem;
     }
 
-    .movie-rating {
+    .movie-rating-r {
       background-color: #f44336;
+      color: #ffffff;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+    }
+    .movie-rating-o {
+      background-color: #ff9800;
+      color: #ffffff;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+    }
+    .movie-rating-g {
+      background-color: #4caf50;
       color: #ffffff;
       padding: 0.3rem 0.6rem;
       border-radius: 4px;
@@ -339,12 +351,14 @@
     <div class="movie-list" th:if="${allMovies != null}">
       <!-- Repeat for each movie in the list -->
       <div class="movie-card" th:each="movie : ${allMovies}">
-        <img th:src="${movie.posterUrl}" alt="Movie Poster" />
+        <img th:src="${movie.posterUrl}" th:alt="${movie.posterUrl}" />
         <div class="movie-card-content">
           <h3 th:text="${movie.title}">Movie Title</h3>
           <p th:text="${movie.shortDescription}">Short description...</p>
           <div class="movie-details">
-            <span class="movie-rating" th:text="${movie.rating}">8.5</span>
+            <span class="movie-rating-r" th:text="${movie.formatRating()}" th:if="${movie.rating <= 30}"></span>
+            <span class="movie-rating-o" th:text="${movie.formatRating()}" th:if="${movie.rating > 30 && movie.rating <= 70}"></span>
+            <span class="movie-rating-g" th:text="${movie.formatRating()}" th:if="${movie.rating > 70}"></span>
             <a th:href="@{/movie/{id}(id=${movie.id})}">More Details</a>
           </div>
         </div>
