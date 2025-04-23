@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Movies {
+public class Movies implements Comparable<Movies> {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
@@ -24,7 +24,7 @@ public class Movies {
     private String trailerUrl;
     private int rating;
     private boolean released;
-    //вид 9.0 (с точкой)
+
     public String formatRating() {
         return "" + rating/10 + "." + rating % 10;
     }
@@ -35,4 +35,17 @@ public class Movies {
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres = new HashSet<>();
+
+    @Override
+    public int compareTo(Movies other) {
+        return Integer.compare(other.rating, this.rating);
+    }
+
+    @ElementCollection
+    @CollectionTable(
+            name = "movie_cities",
+            joinColumns = @JoinColumn(name = "movie_id")
+    )
+    @Column(name = "city")
+    private Set<String> cities = new HashSet<>();
 }

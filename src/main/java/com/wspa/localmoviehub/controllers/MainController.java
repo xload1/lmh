@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
@@ -27,12 +28,14 @@ public class MainController {
     @GetMapping("/home")
     public String home(Model model, HttpServletRequest request) {
         model.addAttribute("userCity", getCity(request));
+        model.addAttribute("recommendedMovies", movieService.getAllReleasedMovies().stream().sorted().limit(4).collect(Collectors.toList()));
+        model.addAttribute("trendingMovies", movieService.getTrendingInCity(cur_city).stream().limit(10).collect(Collectors.toList()));
         return "main";
     }
 
     @GetMapping("/explore")
     public String explore(Model model, HttpServletRequest request,
-                          @RequestParam(value = "genre", required = false) String genre,
+                          @RequestParam(value = "genre", required = false, defaultValue = "") String genre,
                           @RequestParam(value = "minRating", required = false) Integer minRating,
                           @RequestParam(value = "maxRating", required = false) Integer maxRating,
                           @RequestParam(value = "keyword", required = false) String keyword) {

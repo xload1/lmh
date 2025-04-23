@@ -220,6 +220,25 @@
             border-radius: 4px;
         }
 
+        .movie-rating-r {
+            background-color: #f44336;
+            color: #ffffff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+        .movie-rating-o {
+            background-color: #ff9800;
+            color: #ffffff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+        .movie-rating-g {
+            background-color: #4caf50;
+            color: #ffffff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+        }
+
         /* --------- FOOTER --------- */
         footer {
             background-color: #1a1a1a;
@@ -278,8 +297,12 @@
 
 <!-- SEARCH BAR -->
 <div class="search-bar">
-    <form th:action="@{/search}" method="get">
-        <input type="text" name="q" placeholder="Search for movies, genres, or actors..." />
+    <form th:action="@{/explore}" method="get">
+        <input
+                type="text"
+                name="keyword"
+                placeholder="Search for movies..."
+        />
         <button type="submit">Search</button>
     </form>
 </div>
@@ -290,28 +313,32 @@
     <h2 class="section-title">Recommended For You</h2>
     <div class="movie-list" th:if="${recommendedMovies != null}">
         <div class="movie-card" th:each="movie : ${recommendedMovies}">
-            <img th:src="${movie.posterUrl}" alt="Movie Poster" />
+            <img th:src="${movie.getPosterUrl()}" alt="Movie Poster" />
             <div class="movie-card-content">
-                <h3 th:text="${movie.title}">Movie Title</h3>
-                <p th:text="${movie.shortDescription}">Short description of the movie...</p>
+                <h3 th:text="${movie.getTitle()}">Movie Title</h3>
+                <p th:text="${movie.getShortDescription()}">Short description of the movie...</p>
                 <div class="movie-details">
-                    <span class="movie-rating" th:text="${movie.rating}">8.5</span>
-                    <a th:href="@{/movie/{id}(id=${movie.id})}">More Details</a>
+                    <span class="movie-rating-r" th:text="${movie.formatRating()}" th:if="${movie.getRating() <= 30}"></span>
+                    <span class="movie-rating-o" th:text="${movie.formatRating()}" th:if="${movie.getRating() > 30 && movie.getRating() <= 70}"></span>
+                    <span class="movie-rating-g" th:text="${movie.formatRating()}" th:if="${movie.getRating() > 70}"></span>
+                    <a th:href="@{/movie/{id}(id=${movie.getId()})}">More Details</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- TRENDING MOVIES SECTION -->
-    <h2 class="section-title" style="margin-top: 2rem;">Trending in Your Area</h2>
+    <h2 class="section-title" style="margin-top: 2rem;" th:text="'Trending in Your Area (' + ${userCity} + ')'">Trending in Your Area</h2>
     <div class="movie-list" th:if="${trendingMovies != null}">
         <div class="movie-card" th:each="trend : ${trendingMovies}">
-            <img th:src="${trend.posterUrl}" alt="Movie Poster" />
+            <img th:src="${trend.getPosterUrl()}" alt="Movie Poster" />
             <div class="movie-card-content">
-                <h3 th:text="${trend.title}">Trending Movie Title</h3>
-                <p th:text="${trend.shortDescription}">Short description of the trending movie...</p>
+                <h3 th:text="${trend.getTitle()}">Trending Movie Title</h3>
+                <p th:text="${trend.getShortDescription()}">Short description of the trending movie...</p>
                 <div class="movie-details">
-                    <span class="movie-rating" th:text="${trend.rating}">9.0</span>
+                    <span class="movie-rating-r" th:text="${trend.formatRating()}" th:if="${trend.getRating() <= 30}"></span>
+                    <span class="movie-rating-o" th:text="${trend.formatRating()}" th:if="${trend.getRating() > 30 && trend.getRating() <= 70}"></span>
+                    <span class="movie-rating-g" th:text="${trend.formatRating()}" th:if="${trend.getRating() > 70}"></span>
                     <a th:href="@{/movie/{id}(id=${trend.id})}">More Details</a>
                 </div>
             </div>

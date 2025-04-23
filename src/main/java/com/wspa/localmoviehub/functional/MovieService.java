@@ -25,4 +25,7 @@ public class MovieService {
 
         return moviesRepository.findAll(specification);
     }
+    public List<Movies> getTrendingInCity(String city) {
+        return moviesRepository.findDistinctByCitiesContaining(city);
+    }
 }
