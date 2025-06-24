@@ -32,4 +32,12 @@ public class MovieService {
     public Optional<Movies> getMovieById(int id) {
         return moviesRepository.findById(id);
     }
+
+    public List<Movies> getUpcomingMoviesFiltered(String keyword,String genre) {
+        Specification<Movies> specification = Specification.where(MoviesSpecifications.hasGenre(genre))
+                .and(MoviesSpecifications.titleOrDescriptionContains(keyword))
+                .and(MoviesSpecifications.isUpcoming());
+
+        return moviesRepository.findAll(specification);
+    }
 }

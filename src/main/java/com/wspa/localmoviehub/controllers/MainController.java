@@ -1,6 +1,7 @@
 package com.wspa.localmoviehub.controllers;
 
 import com.wspa.localmoviehub.entities.Movies;
+import com.wspa.localmoviehub.functional.GenreRepository;
 import com.wspa.localmoviehub.functional.MovieService;
 import com.wspa.localmoviehub.functional.TheatreService;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +25,8 @@ public class MainController {
     private MovieService movieService;
     @Autowired
     private TheatreService theatreService;
+    @Autowired
+    private GenreRepository genreRepository;
 
     @GetMapping("/")
     public String redirectHome() {
@@ -98,4 +101,19 @@ public class MainController {
         movieService.getMovieById(id).ifPresent(m -> model.addAttribute("movie", m));
         return "movie-details";
     }
+
+    @GetMapping("/upcoming")
+    public String upcomingPage(Model model,
+                               @RequestParam(required=false) String keyword,
+                               @RequestParam(required=false) String genre) {
+
+        List<Movies> list = movieService.getUpcomingMoviesFiltered(keyword, genre);
+        model.addAttribute("upcomingMovies", list);
+
+        // для выпадающего списка жанров
+        model.addAttribute("allGenres", genreRepository.findAll());
+
+        return "upcoming"; // имя шаблона выше
+    }
+
 }

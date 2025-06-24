@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upcoming Movies | Local Movie Hub</title>
+
+  <style>
+    /* ───── GLOBAL RESET ───── */
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+    body{background:#10141a;color:#e5e6eb;overflow-x:hidden;}
+
+    /* ───── NAVBAR (consistent with other pages) ───── */
+    nav{
+      display:flex;justify-content:space-between;align-items:center;
+      background:#1a1a1a;padding:.85rem 2rem;position:sticky;top:0;z-index:888;
+      box-shadow:0 2px 8px rgba(0,0,0,.45);
+    }
+    nav .logo{font-size:1.55rem;font-weight:700;color:#fff;}
+    nav ul{list-style:none;display:flex;gap:1.5rem;}
+    nav ul li a{color:#fff;transition:color .25s;text-decoration:none;}
+    nav ul li a:hover{color:#f44336;}
+
+    /* ───── HERO HEADER ───── */
+    header{
+      text-align:center;padding:3.5rem 1rem 2.4rem;
+      background:radial-gradient(circle at center,#0d324d 0%,#000 100%);
+      position:relative;overflow:hidden;
+    }
+    header h1{
+      font-size:3rem;font-weight:900;letter-spacing:1px;
+      color:#f44336;text-shadow:0 0 10px rgba(244,67,54,.7);
+    }
+    header p{margin-top:.6rem;font-size:1.05rem;color:#9aa0ac;}
+
+    /* animated bubbles */
+    .bubble{
+      position:absolute;bottom:-160px;width:120px;height:120px;border-radius:50%;
+      background:rgba(244,67,54,.20);filter:blur(32px);animation:float 16s infinite linear;
+    }
+    .bubble:nth-child(1){left:15%;animation-delay:0s;}
+    .bubble:nth-child(2){left:45%;animation-delay:5s;}
+    .bubble:nth-child(3){left:75%;animation-delay:2.5s;}
+    @keyframes float{to{transform:translateY(-180vh) scale(.35);opacity:0;}}
+
+    /* ───── FILTER BAR ───── */
+    .toolbar{
+      margin:-1.7rem auto 2.7rem;max-width:900px;
+      background:#1f1c2c;padding:.85rem 1.25rem;border-radius:10px;
+      box-shadow:0 8px 20px rgba(0,0,0,.35);display:flex;gap:1rem;flex-wrap:wrap;
+    }
+    .toolbar input,.toolbar select{
+      flex:1 1 160px;background:#25283d;border:1px solid #3e4257;border-radius:6px;
+      padding:.65rem;color:#e5e6eb;transition:border .25s;
+    }
+    .toolbar input::placeholder{color:#757a8d;}
+    .toolbar input:focus,.toolbar select:focus{border-color:#f44336;}
+
+    /* ───── GRID & CARD ───── */
+    .grid{max-width:1200px;margin:0 auto;display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.6rem;}
+
+    .card{
+      position:relative;border-radius:10px;overflow:hidden;
+      box-shadow:0 6px 14px rgba(0,0,0,.45);
+      transform:translateY(20px);opacity:0;
+      animation:reveal .6s forwards var(--delay);
+    }
+    @keyframes reveal{to{transform:translateY(0);opacity:1;}}
+    .poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;}
+
+    .info{
+      background:#1b1d2b;padding:1rem 1.1rem 1.4rem;display:flex;flex-direction:column;
+      gap:.55rem;min-height:170px;
+    }
+    .info h3{font-size:1.16rem;font-weight:700;color:#f0f1f6;}
+    .info p{font-size:.9rem;color:#a0a4b4;max-height:54px;overflow:hidden;}
+
+    .genres{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:auto;}
+    .genre{
+      font-size:.7rem;background:#272a3e;color:#f44336;font-weight:600;
+      padding:.25rem .6rem;border-radius:40px;text-transform:uppercase;letter-spacing:.5px;
+    }
+
+    /* ───── EMPTY STATE ───── */
+    .no-movies{margin:4rem auto;text-align:center;font-size:1.25rem;opacity:.7;display:flex;flex-direction:column;gap:.8rem;}
+    .no-movies span{font-size:3rem;}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo" href="/" th:href="@{/}">Local Movie Hub</a>
+  <ul>
+    <li><a href="/home"    th:href="@{/home}">Home</a></li>
+    <li><a href="/explore" th:href="@{/explore}">Explore</a></li>
+    <li><a href="/upcoming" class="active"  th:href="@{/upcoming}">Upcoming</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header>
+  <h1>🎬 Upcoming Premieres</h1>
+  <p>Fresh stories, brand-new adventures and the irresistible smell&nbsp;of&nbsp;popcorn.</p>
+  <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+</header>
+
+<br><br>
+<!-- FILTER BAR -->
+<form class="toolbar" th:action="@{/upcoming}" method="get">
+  <input type="text" name="keyword" placeholder="Search title…" th:value="${param.keyword}">
+  <select name="genre">
+    <option value="">All genres</option>
+    <option th:each="g : ${allGenres}" th:value="${g.name}" th:text="${g.name}"
+            th:selected="${param.genre} == ${g.name}">Action</option>
+  </select>
+</form>
+
+<!-- MOVIE GRID -->
+<div class="grid" th:if="${upcomingMovies != null and upcomingMovies.size() > 0}">
+  <div class="card" th:each="m, stat : ${upcomingMovies}"
+       th:style="|--delay:${stat.index * 0.06}s|">
+
+    <img class="poster" th:src="${m.posterUrl}" th:alt="${m.title}"/>
+
+    <div class="info">
+      <h3 th:text="${m.title}">Movie Title</h3>
+      <p th:text="${m.shortDescription}">Short tease text…</p>
+
+      <div class="genres">
+        <span class="genre" th:each="g : ${m.genres}" th:text="${g.name}">Action</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHEN NO UPCOMING MOVIES -->
+<div class="no-movies" th:if="${upcomingMovies == null or upcomingMovies.isEmpty()}">
+  <span>🤷‍♂️</span>
+  Nothing on the horizon…<br/>
+  Check back soon or adjust your filters.
+</div>
+
+</body>
+</html>

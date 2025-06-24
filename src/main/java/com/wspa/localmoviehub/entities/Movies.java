@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class Movies implements Comparable<Movies> {
     private String trailerUrl;
     private int rating;
     private boolean released;
+    private Date releaseDate;
 
     public String formatRating() {
         return "" + rating/10 + "." + rating % 10;

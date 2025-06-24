@@ -76,17 +76,20 @@
     }
 
     /* ---------- TRAILER ---------- */
+    /* Новый трейлер занимает обе колонки и ограничивается по ширине */
     .trailer{
-      margin-top:2rem;
+      grid-column:1 / -1;        /* растянуться на poster+details */
+      width:100%;                 /* ~60 % всей страницы */
+      margin:2rem auto 0 auto;   /* центрируем */
       position:relative;
-      padding-top:56.25%;   /* 16:9 соотношение */
+      padding-top:56.25%;        /* 16:9 */
       border-radius:8px;
       overflow:hidden;
       box-shadow:0 4px 12px rgba(0,0,0,.15);
     }
     .trailer iframe{
       position:absolute;
-      inset:0;              /* top:0; right:0; bottom:0; left:0 */
+      inset:0;
       width:100%;
       height:100%;
     }
@@ -145,15 +148,18 @@
       Main description in details…
     </div>
   </div>
-</section>
-
-<!-- TRAILER -->
-  <div class="trailer" style="width: 60%">
+  <!-- Watch the trailer text -->
+  <h2 class="movie-title">Watch the Trailer</h2>
+  <div class="trailer">
     <iframe th:src="${movie.trailerUrl}"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
             frameborder="0"></iframe>
   </div>
+</section>
+
+<!-- TRAILER -->
+
 
 <!-- FOOTER -->
 <footer>

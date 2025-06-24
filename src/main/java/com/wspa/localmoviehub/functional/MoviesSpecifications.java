@@ -53,4 +53,8 @@ public class MoviesSpecifications {
         return (root, query, builder) ->
                 builder.equal(root.get("released"), true);
     }
+    public static Specification<Movies> isUpcoming() {
+        return (root, query, builder) ->
+                builder.equal(root.get("released"), false);
+    }
 }

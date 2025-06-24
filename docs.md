@@ -1,0 +1,173 @@
+
+# **Local Movie Hub**
+*Marat Tsasiuk · 2025*
+
+---
+
+## 1. Domain description
+
+Local Movie Hub is a single-page Spring Boot web application that helps cinema-goers  
+discover **currently-screening** titles, **upcoming premieres**, nearby cinemas and rich details  
+(poster, synopsis, trailer, rating, genres, availability by city) for every film.
+
+| Goal | How it is supported |
+|------|--------------------|
+|Find a film worth watching tonight | landing page shows “Trending in **your city**”, “Recommended for you”, full catalogue |
+|Check where the film is available | every movie stores a set of *cities*; UI filter “My city only” |
+|Plan ahead for premieres          | dedicated **/upcoming** view with animated cards |
+|Watch trailers & read descriptions| embedded YouTube iframe + *mainDescription / shortDescription* |
+|Filter / search                   | toolbar filters (keyword ✚ genre) + rating sliders |
+|Manage content                    | JPA entities (`Movies`, `Genre`, `Theatre`) editable in pgAdmin or Flyway migrations |
+
+### Functional requirements
+1.  Browse all released films (`released=true`).
+2.  Browse upcoming films (`released=false`).
+3.  Search by keyword, filter by genre, rating range and city.
+4.  Show full details, trailer and genres for a selected movie.
+5.  Detect user city (IP/GPS) → cookie → “Trending in *city*”.
+6.  Display list of theatres.
+
+---
+
+## 2. Non-functional requirements
+
+| Stack element | Version | Purpose |
+|---------------|---------|---------|
+|Java SE | 17 | core language for backend |
+|Spring Boot | 3.3.0 | DI, MVC, Data-JPA, static resources |
+|PostgreSQL | 16.2 | relational storage for movies / genres / theatres |
+|Flyway DB | 10.9 | repeatable, versioned SQL migrations |
+|Thymeleaf | 3.1 | server-side HTML templating |
+|Hibernate ORM | 6.5 | JPA provider, lazy loading |
+|Lombok | 1.18.32 | boiler-plate-free entities (getters/setters) |
+|Bootstrap icons | 1.11 | lightweight icon set |
+|OpenStreetMap Nominatim API | v2 | reverse-geocoding lat/lon → city |
+|YouTube embed player | 2025-06 | trailers inside `<iframe>` |
+|Gradle | —| build / dependency management |
+|Tomcat (embedded) | 10.1 | servlet container inside Spring Boot |
+|HTML 5 + CSS 3 | — | semantic markup, responsive layout |
+|JavaScript (ES2022) | — | geolocation, AJAX filters, animations |
+
+---
+
+## 3. Wireframes / mock-ups
+
+```
+
+\[NAVBAR]  Local Movie Hub | Home | Explore | Upcoming
+┌────────────────────────────────────────────────────────────┐
+│  HERO  (blurred banner)                                    │
+│  “Discover movies near you”  \[Explore button]              │
+└────────────────────────────────────────────────────────────┘
+\[toolbar] keyword ▢  genre ▼  rating min-max  \[Filter]
+┌─ Recommended ──────────────────────────────────────────────┐
+│ Poster  Title  ★rating  \[Details]                          │
+└─────────────────────────────────────────────────────────────┘
+┌─ Trending in {{city}} ─────────────────────────────────────┐
+│ Poster  Title  ★rating  …                                  │
+└─────────────────────────────────────────────────────────────┘
+
+```
+```
+
+Movie-details.html
+┌─────────────┬──────────────────────────────────────────────┐
+│ Poster      │  Title   ★rating                             │
+│             │  Genres: Action | Drama                      │
+│             │  Short description                           │
+│             │ ──────────────────────────────────────────── │
+│             │  Main description (card)                     │
+└─────────────┴──────────────────────────────────────────────┘
+\[YouTube trailer ]
+
+```
+```
+
+Upcoming.html
+\[neon hero]
+\[filter bar]
+┌card──────────┐  reveal animation
+│Poster        │
+│Title         │
+│Short tease   │
+│Genres pills  │
+└──────────────┘
+
+```
+
+*(mock-ups are stored in `/mockups/ and match this scheme.)*
+
+---
+
+## 4. Database description
+
+* **DBMS** – PostgreSQL 16, running locally in Docker (`postgres:16-alpine`).
+* **Purpose** – durable storage of movies, genres, theatres, city availability.
+* **Structure**
+
+```
+
+```
+            +---------+     +-----------+
+            | genres  |     | theatres  |
+            +----+----+     +----+------+
+                 | 1           | 1
+                 | N           | N
+```
+
++---------+     +----+-------------+------+
+\| movies  |-----| movie\_genres     | movie\_cities |
++----+----+     +------------------+--------------+
+
+````
+
+* **Key tables**
+    * `movies` (id, title, short_description, main_description, poster_url, trailer_url, rating, released, release_date)
+    * `genres` (id, name)
+    * `movie_genres` (movie_id, genre_id)
+    * `movie_cities` (movie_id, city varchar)
+    * `theatre` (id, name, address, city, distance)
+
+* **Typical queries**
+    * `SELECT * FROM movies WHERE released = true ORDER BY rating DESC;`
+    * Dynamic specification (`Genre + keyword + city`): generated by Spring Data `JpaSpecificationExecutor`.
+    * Insert theatre list for Lublin: batch `INSERT … VALUES (‘Cinema City’, …);`
+
+---
+
+## 5. How the site fulfils project requirements
+
+* **Geolocation** – browser GPS / IP lookup posts city to `/setCity`; site then shows “Trending in *city*”, hides other towns.
+* **Multimedia** – every details page embeds a YouTube trailer; posters shown in lazy-loaded `<img>` tags.
+* **Graphics** – genre pills, cinema icons, custom SVG logo.
+* **Forms** – filter toolbar (keyword, genre); contact page newsletter signup.
+* **Client-side JS** – reveal animations, grid delays (`var(--delay)`), geolocation + fetch to Nominatim.
+* **CSS / responsiveness** – pure CSS Grid + flexbox; layout collapses to single column below 900 px; tested in Chrome dev-tools.
+
+---
+
+## 6. Installation / run guide
+
+```bash
+# 1. clone repo
+git clone https://github.com/mtsasiuk/local-movie-hub.git
+cd local-movie-hub
+
+# 2. start Postgres (Docker)
+docker compose up -d db        # uses ./docker-compose.yml
+
+# 3. build & run Spring Boot
+./mvnw spring-boot:run         # or `mvn clean package && java -jar target/app.jar`
+
+# 4. open browser
+https://localhost:8080/ 
+````
+
+*Credentials* – default postgres user/pass in `application.yaml`.
+Flyway automatically creates schema and demo data on first run.
+Optional: set `SPRING_PROFILES_ACTIVE=prod` to connect to a remote RDS instance.
+
+---
+
+```
+```
