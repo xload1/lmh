@@ -20,6 +20,7 @@ public class Movies implements Comparable<Movies> {
     private int id;
     private String title;
     private String shortDescription;
+    private String mainDescription;
     private String posterUrl;
     private String trailerUrl;
     private int rating;

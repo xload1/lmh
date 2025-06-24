@@ -2,6 +2,7 @@ package com.wspa.localmoviehub.controllers;
 
 import com.wspa.localmoviehub.entities.Movies;
 import com.wspa.localmoviehub.functional.MovieService;
+import com.wspa.localmoviehub.functional.TheatreService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -20,6 +22,8 @@ public class MainController {
     String cur_city = "Unknown";
     @Autowired
     private MovieService movieService;
+    @Autowired
+    private TheatreService theatreService;
 
     @GetMapping("/")
     public String redirectHome() {
@@ -45,6 +49,7 @@ public class MainController {
         List<Movies> movies = movieService.getFilteredMovies(genre, minRating, maxRating, keyword);
         model.addAttribute("allMovies", movies);
         model.addAttribute("chosenGenre", genre);
+        model.addAttribute("nearbyTheaters", theatreService.getNearbyTheatres(cur_city));
 
         return "explore";
     }
@@ -88,5 +93,9 @@ public class MainController {
         }
         return cur_city;
     }
-
+    @GetMapping("/movie/{id}")
+    public String movieDetails(@PathVariable int id, Model model) {
+        movieService.getMovieById(id).ifPresent(m -> model.addAttribute("movie", m));
+        return "movie-details";
+    }
 }

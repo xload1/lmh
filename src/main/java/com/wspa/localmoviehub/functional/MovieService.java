@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MovieService {
@@ -27,5 +28,8 @@ public class MovieService {
     }
     public List<Movies> getTrendingInCity(String city) {
         return moviesRepository.findDistinctByCitiesContaining(city);
+    }
+    public Optional<Movies> getMovieById(int id) {
+        return moviesRepository.findById(id);
     }
 }
